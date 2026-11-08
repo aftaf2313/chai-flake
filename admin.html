@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chai Flake - Admin Portal</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --primary-glow: rgba(245, 158, 11, 0.25);
+            --bg-dark: #0f172a;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent-green: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphic Navbar Header */
+        .navbar {
+            background: rgba(15, 23, 42, 0.94);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container-v3 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon-v3 {
+            font-size: 1.8rem;
+            background: linear-gradient(180deg, #d97706, #78350f);
+            padding: 0.5rem 0.7rem;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(217, 119, 6, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title-v3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            line-height: 1.1;
+        }
+
+        .brand-title-v3::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 45%;
+            height: 3px;
+            background: #f59e0b;
+            border-radius: 2px;
+        }
+
+        .brand-subtitle-v3 {
+            display: block;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .admin-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-badge {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* Auth Container Forms (Register / Login) */
+        .auth-wrapper {
+            max-width: 440px;
+            margin: 4rem auto;
+            width: 100%;
+            padding: 0 1.5rem;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2.2rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        .auth-card h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.4rem;
+            color: var(--bg-dark);
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .auth-form label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            background: #fff;
+        }
+
+        .auth-form input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .btn-auth {
+            background: var(--bg-dark);
+            color: var(--primary);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+        }
+
+        .btn-auth:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .auth-toggle a {
+            color: var(--primary-dark);
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Main Admin Dashboard Container */
+        .container {
+            max-width: 1250px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            background: #f1f5f9;
+            padding: 0.8rem;
+            border-radius: 12px;
+        }
+
+        .stat-info h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .stat-info .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--bg-dark);
+            margin-top: 0.2rem;
+        }
+
+        .section-box {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .product-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            align-items: end;
+        }
+
+        .btn-submit {
+            background: var(--bg-dark);
+            color: var(--primary);
+            border: none;
+            padding: 0.8rem 1.4rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.95rem;
+            height: 44px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        table th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .table-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .inline-price-input {
+            width: 90px;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-save {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            margin-right: 0.3rem;
+        }
+
+        .btn-save:hover {
+            background: var(--accent-green);
+            color: #fff;
+        }
+
+        .status-select {
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-weight: 700;
+        }
+
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--bg-dark);
+            color: #fff;
+            padding: 0.8rem 1.4rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            margin-top: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo-container-v3">
+            <div class="logo-icon-v3">☕</div>
+            <div class="logo-text-v3">
+                <h1 class="brand-title-v3">CHAI FLAKE</h1>
+                <span class="brand-subtitle-v3">HOTEL DINING & ROOM SERVICE</span>
+            </div>
+        </div>
+        <div class="admin-header-right">
+            <div class="admin-badge" id="admin-user-display">🛠️ ADMIN PANEL</div>
+            <button class="btn-logout hidden" id="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- AUTH SECTION: REGISTER FORM -->
+    <div class="auth-wrapper" id="register-section">
+        <div class="auth-card">
+            <h2>Admin Registration</h2>
+            <p>Create your admin credentials to access management controls.</p>
+            <form class="auth-form" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="reg-name">Full Name</label>
+                    <input type="text" id="reg-name" required placeholder="e.g. Rahul Sharma">
+                </div>
+                <div class="form-group">
+                    <label for="reg-mobile">Mobile Number</label>
+                    <input type="tel" id="reg-mobile" required pattern="[0-9]{10}" placeholder="10-digit Mobile Number">
+                </div>
+                <div class="form-group">
+                    <label for="reg-userid">Custom User ID</label>
+                    <input type="text" id="reg-userid" required placeholder="e.g. admin123 or manager">
+                </div>
+                <div class="form-group">
+                    <label for="reg-pin">4-Digit Password PIN</label>
+                    <input type="password" id="reg-pin" required maxlength="4" pattern="[0-9]{4}" placeholder="4-digit PIN (e.g. 1234)">
+                </div>
+                <button type="submit" class="btn-auth">Register Admin Account</button>
+            </form>
+            <div class="auth-toggle">
+                Already registered? <a onclick="toggleAuthView('login')">Log In Here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH SECTION: LOGIN FORM -->
+    <div class="auth-wrapper hidden" id="login-section">
+        <div class="auth-card">
+            <h2>Admin Login</h2>
+            <p>Enter your User ID and 4-digit PIN password.</p>
+            <form class="auth-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-userid">User ID</label>
+                    <input type="text" id="login-userid" required placeholder="Enter User ID">
+                </div>
+                <div class="form-group">
+                    <label for="login-pin">4-Digit Password PIN</label>
+                    <input type="password" id="login-pin" required maxlength="4" pattern="[0-9]{4}" placeholder="4-digit PIN">
+                </div>
+                <button type="submit" class="btn-auth">Log In to Dashboard</button>
+            </form>
+            <div class="auth-toggle">
+                Don't have an account? <a onclick="toggleAuthView('register')">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD PANEL (PROTECTED VIEW) -->
+    <div class="container hidden" id="dashboard-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-info">
+                    <h3>Total Revenue</h3>
+                    <div class="stat-value" id="stat-revenue">₹0.00</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛒</div>
+                <div class="stat-info">
+                    <h3>Active Orders</h3>
+                    <div class="stat-value" id="stat-active-orders">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-info">
+                    <h3>Menu Items</h3>
+                    <div class="stat-value" id="stat-products-count">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-header">
+                <h2>Add / Price New Menu Product</h2>
+            </div>
+            <form class="product-form" onsubmit="handleAddProduct(event)">
+                <div class="form-group">
+                    <label for="prod-name">Product Name</label>
+                    <input type="text" id="prod-name" required placeholder="e.g. Classic Cigarette Pack">
+                </div>
+                <div class="form-group">
+                    <label for="prod-category">Category</label>
+                    <select id="prod-category">
+                        <option value="Beverages">Beverages</option>
+                        <option value="Breakfast & Flakes">Breakfast & Flakes</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Cigarette">Cigarette</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prod-price">Price (₹)</label>
+                    <input type="number" step="0.01" id="prod-price" required placeholder="180.00">
+                </div>
+                <div class="form-group">
+                    <label for="prod-file">Upload Photo</label>
+                    <input type="file" id="prod-file" accept="image/*">
+                </div>
+                <button type="submit" class="btn-submit">+ Save Product</button>
+            </form>
+        </div>
+
+        <div class="section-box">
+            <div class="section-header">
+                <h2>Manage Menu Items, Photos & Prices</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Price (₹)</th>
+                            <th>Quick Price Update</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-products-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-header">
+                <h2>Live Customer Orders</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Time</th>
+                            <th>Room / Table</th>
+                            <th>Ordered Items</th>
+                            <th>Total Bill</th>
+                            <th>Order Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-orders-table"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        const fallbackImage = 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=400&q=80';
+
+        const defaultProducts = [
+            { id: 1, name: "Masala Chai", category: "Beverages", price: 30.00, image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80" },
+            { id: 2, name: "Cardamom Flake Special Chai", category: "Beverages", price: 40.00, image: "https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&w=400&q=80" },
+            { id: 3, name: "Corn Flakes with Warm Milk", category: "Breakfast & Flakes", price: 90.00, image: "https://images.unsplash.com/photo-1521483451569-e33803c0330c?auto=format&fit=crop&w=400&q=80" },
+            { id: 4, name: "Chocolate Flake Bowl", category: "Breakfast & Flakes", price: 120.00, image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=400&q=80" },
+            { id: 5, name: "Vegetable Samosa (2 pcs)", category: "Snacks", price: 50.00, image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=400&q=80" },
+            { id: 6, name: "Bun Maska", category: "Snacks", price: 40.00, image: "https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&w=400&q=80" },
+            { id: 7, name: "Classic Mint Cigarette (Pack)", category: "Cigarette", price: 180.00, image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('chai_products')) || defaultProducts;
+        let orders = JSON.parse(localStorage.getItem('chai_orders')) || [];
+        let adminAccount = JSON.parse(localStorage.getItem('chai_admin_account')) || null;
+        let isLoggedIn = JSON.parse(sessionStorage.getItem('chai_admin_logged_in')) || false;
+
+        // AUTHENTICATION LOGIC
+        function initAuth() {
+            if (isLoggedIn && adminAccount) {
+                showDashboard();
+            } else if (adminAccount) {
+                toggleAuthView('login');
+            } else {
+                toggleAuthView('register');
+            }
+        }
+
+        function toggleAuthView(view) {
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+
+            if (view === 'register') {
+                document.getElementById('register-section').classList.remove('hidden');
+            } else if (view === 'login') {
+                document.getElementById('login-section').classList.remove('hidden');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const mobile = document.getElementById('reg-mobile').value.trim();
+            const userId = document.getElementById('reg-userid').value.trim();
+            const pin = document.getElementById('reg-pin').value.trim();
+
+            if (!/^\d{4}$/.test(pin)) {
+                alert('Password PIN must be exactly 4 digits!');
+                return;
+            }
+
+            adminAccount = { name, mobile, userId, pin };
+            localStorage.setItem('chai_admin_account', JSON.stringify(adminAccount));
+            sessionStorage.setItem('chai_admin_logged_in', JSON.stringify(true));
+            isLoggedIn = true;
+
+            showToast(`Registration Successful! Welcome ${name}`);
+            showDashboard();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const userId = document.getElementById('login-userid').value.trim();
+            const pin = document.getElementById('login-pin').value.trim();
+
+            if (!adminAccount) {
+                alert('No admin account registered yet.');
+                toggleAuthView('register');
+                return;
+            }
+
+            if (userId === adminAccount.userId && pin === adminAccount.pin) {
+                sessionStorage.setItem('chai_admin_logged_in', JSON.stringify(true));
+                isLoggedIn = true;
+                showToast(`Welcome back, ${adminAccount.name}!`);
+                showDashboard();
+            } else {
+                alert('Invalid User ID or 4-Digit Password PIN.');
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+
+            if (adminAccount) {
+                document.getElementById('admin-user-display').textContent = `👤 ${adminAccount.name} (${adminAccount.userId})`;
+            }
+
+            renderAdminProducts();
+            renderAdminOrders();
+            updateStats();
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('chai_admin_logged_in');
+            isLoggedIn = false;
+            showToast('Logged out successfully');
+            toggleAuthView('login');
+        }
+
+        // PRODUCT MANAGEMENT LOGIC
+        function saveProducts() {
+            localStorage.setItem('chai_products', JSON.stringify(products));
+        }
+
+        function saveOrders() {
+            localStorage.setItem('chai_orders', JSON.stringify(orders));
+        }
+
+        function updateStats() {
+            document.getElementById('stat-products-count').textContent = products.length;
+            const activeOrders = orders.filter(o => o.status !== 'Delivered');
+            document.getElementById('stat-active-orders').textContent = activeOrders.length;
+            const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+            document.getElementById('stat-revenue').textContent = `₹${totalRevenue.toFixed(2)}`;
+        }
+
+        function renderAdminProducts() {
+            const tbody = document.getElementById('admin-products-table');
+            if (products.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No products listed yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td><img src="${p.image || fallbackImage}" class="table-img" onerror="this.src='${fallbackImage}'"></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td><span style="background:#f1f5f9; padding:0.2rem 0.5rem; border-radius:4px; font-size:0.8rem; font-weight:700;">${p.category}</span></td>
+                    <td><strong>₹${parseFloat(p.price).toFixed(2)}</strong></td>
+                    <td>
+                        <input type="number" step="0.01" value="${parseFloat(p.price).toFixed(2)}" class="inline-price-input" id="price-input-${p.id}">
+                        <button class="btn-sm btn-save" onclick="updatePrice(${p.id})">Save</button>
+                    </td>
+                    <td>
+                        <button class="btn-sm btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function handleAddProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('prod-name').value.trim();
+            const category = document.getElementById('prod-category').value;
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const fileInput = document.getElementById('prod-file');
+
+            let imageUrl = fallbackImage;
+
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                imageUrl = await convertFileToBase64(file);
+            }
+
+            const newProduct = {
+                id: Date.now(),
+                name,
+                category,
+                price,
+                image: imageUrl
+            };
+
+            products.push(newProduct);
+            saveProducts();
+            renderAdminProducts();
+            updateStats();
+
+            e.target.reset();
+            showToast(`Added "${name}" under ${category}!`);
+        }
+
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function updatePrice(id) {
+            const input = document.getElementById(`price-input-${id}`);
+            const newPrice = parseFloat(input.value);
+            const product = products.find(p => p.id === id);
+
+            if (product && !isNaN(newPrice) && newPrice >= 0) {
+                product.price = newPrice;
+                saveProducts();
+                renderAdminProducts();
+                showToast(`Updated price for ${product.name}`);
+            } else {
+                alert('Please enter a valid price.');
+            }
+        }
+
+        function deleteProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (confirm(`Are you sure you want to delete "${product ? product.name : 'this item'}"?`)) {
+                products = products.filter(p => p.id !== id);
+                saveProducts();
+                renderAdminProducts();
+                updateStats();
+                showToast('Product deleted.');
+            }
+        }
+
+        function renderAdminOrders() {
+            const tbody = document.getElementById('admin-orders-table');
+            if (orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 2rem;">No customer orders placed yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(o => `
+                <tr>
+                    <td><strong>#${o.id}</strong></td>
+                    <td><small style="color:var(--text-muted);">${o.time || 'N/A'}</small></td>
+                    <td><strong style="color:var(--primary-dark);">${o.room}</strong></td>
+                    <td>${o.items}</td>
+                    <td><strong>₹${parseFloat(o.total).toFixed(2)}</strong></td>
+                    <td>
+                        <select class="status-select" onchange="updateOrderStatus(${o.id}, this.value)">
+                            <option value="Received" ${o.status === 'Received' ? 'selected' : ''}>Received</option>
+                            <option value="Preparing" ${o.status === 'Preparing' ? 'selected' : ''}>Preparing</option>
+                            <option value="Ready" ${o.status === 'Ready' ? 'selected' : ''}>Ready for Room</option>
+                            <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                saveOrders();
+                updateStats();
+                showToast(`Order #${orderId} marked as ${newStatus}`);
+            }
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'chai_orders') {
+                orders = JSON.parse(e.newValue) || [];
+                if (isLoggedIn) {
+                    renderAdminOrders();
+                    updateStats();
+                    showToast('🔔 New Customer Order Received!');
+                }
+            }
+        });
+
+        // Initialize Authentication on load
+        initAuth();
+    </script>
+</body>
+</html>
